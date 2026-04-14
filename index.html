@@ -210,10 +210,7 @@
     }
 
     .body {
-      width: 10px;
-      height: 10px;
-      border-radius: 5px;
-      margin: -1px auto 0;
+      display: none;
     }
 
     .driver { left: 76px; bottom: 46px; }
@@ -221,9 +218,32 @@
 
     .front-passenger { left: 61px; bottom: 46px; }
 
-    /* girly hair for front passenger */
+    /* girly blonde hair */
     .front-passenger .head {
       background: #f2c9a0;
+    }
+
+    .front-passenger .head::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -3px;
+      width: 16px;
+      height: 10px;
+      background: #facc15;
+      border-radius: 10px 10px 6px 6px;
+    }
+
+    .front-passenger .head::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: -3px;
+      width: 3px;
+      height: 8px;
+      background: #facc15;
+      border-radius: 2px;
+      box-shadow: 12px 0 #facc15;
     }
 
     .front-passenger .head::before {
@@ -399,7 +419,8 @@
     function computeAngle(prev, next) {
       const dy = next[0] - prev[0];
       const dx = next[1] - prev[1];
-      return Math.atan2(dy, dx) * 180 / Math.PI;
+      let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      return angle + 90; // adjust so car always points forward correctly
     }
 
     function animateCar() {
