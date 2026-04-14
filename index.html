@@ -1,1 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Versailles to Aachen</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #0b1630 0%, #142850 45%, #f8d7a8 100%);
+      color: white;
+      overflow: hidden;
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .title {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: clamp(24px, 3vw, 42px);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      z-index: 20;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .subtitle {
+      position: absolute;
+      top: 64px;
+      width: 100%;
+      text-align: center;
+      font-size: clamp(13px, 1.5vw, 20px);
+      color: rgba(255,255,255,0.88);
+      z-index: 20;
+    }
+
+    .controls {
+      position: absolute;
+      top: 105px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      z-index: 30;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.12);
+      color: white;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.18);
+    }
+
+    .status {
+      position: absolute;
+      top: 155px;
+      width: 100%;
+      text-align: center;
+      font-size: 15px;
+      color: rgba(255,255,255,0.92);
+      z-index: 20;
+      min-height: 24px;
+    }
+
+    .map {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .map svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .city-label {
+      font-size: 18px;
+      font-weight: 700;
+      fill: white;
+      paint-order: stroke;
+      stroke: rgba(11, 22, 48, 0.7);
+      stroke-width: 5px;
+      stroke-linejoin: round;
+    }
+
+    .small-label {
+      font-size: 14px;
+      fill: rgba(255,255,255,0.9);
+      paint-order: stroke;
+      stroke: rgba(11, 22, 48, 0.6);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+    }
+
+    .route-glow {
+      filter: drop-shadow(0 0 10px rgba(255, 233, 145, 0.65));
+    }
+
+    .car-wrap {
+      position: absolute;
+      left: 18%;
+      top: 62%;
+      width: 240px;
+      height: 140px;
+      z-index: 10;
+      transform: translate(-50%, -50%);
+      animation: driveAlong 14s ease-in-out infinite;
+    }
+
+    @keyframes driveAlong {
+      0%   { left: 18%; top: 62%; transform: translate(-50%, -50%) rotate(-4deg) scale(0.94); }
+      15%  { left: 28%; top: 59%; transform: translate(-50%, -50%) rotate(-2deg) scale(0.97); }
+      30%  { left: 40%; top: 56%; transform: translate(-50%, -50%) rotate(1deg) scale(1.00); }
+      50%  { left: 54%; top: 53%; transform: translate(-50%, -50%) rotate(2deg) scale(1.02); }
+      70%  { left: 68%; top: 49%; transform: translate(-50%, -50%) rotate(-1deg) scale(1.01); }
+      85%  { left: 78%; top: 46%; transform: translate(-50%, -50%) rotate(2deg) scale(1.00); }
+      100% { left: 84%; top: 43%; transform: translate(-50%, -50%) rotate(0deg) scale(0.98); }
+    }
+
+    .car-bounce {
+      width: 100%;
+      height: 100%;
+      animation: roadBounce 0.7s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+
+    @keyframes roadBounce {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .wheel {
+      animation: spin 0.8s linear infinite;
+      transform-origin: center;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .vibe1, .vibe2, .vibe3 {
+      animation: vibe 0.9s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    .vibe2 { animation-delay: 0.15s; }
+    .vibe3 { animation-delay: 0.3s; }
+
+    @keyframes vibe {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-3px) rotate(2deg); }
+    }
+
+    .sleep {
+      animation: sleepBob 1.8s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    @keyframes sleepBob {
+      0%, 100% { transform: rotate(0deg) translateY(0); }
+      50% { transform: rotate(7deg) translateY(2px); }
+    }
+
+    .zzz {
+      animation: zzzFloat 2.4s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    @keyframes zzzFloat {
+      0% { transform: translate(0, 0); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translate(18px, -24px); opacity: 0; }
+    }
+
+    .hearts span {
+      position: absolute;
+      font-size: 22px;
+      opacity: 0;
+      animation: heartFloat 4s linear infinite;
+    }
+
+    .hearts span:nth-child(1) { left: 22%; top: 26%; animation-delay: 0s; }
+    .hearts span:nth-child(2) { left: 74%; top: 22%; animation-delay: 1.4s; }
+    .hearts span:nth-child(3) { left: 58%; top: 17%; animation-delay: 2.6s; }
+
+    @keyframes heartFloat {
+      0% { transform: translateY(12px) scale(0.8); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateY(-26px) scale(1.15); opacity: 0; }
+    }
+
+    .stars span {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.35;
+      animation: twinkle 2.8s ease-in-out infinite;
+    }
+
+    .stars span:nth-child(1) { left: 10%; top: 12%; animation-delay: 0s; }
+    .stars span:nth-child(2) { left: 18%; top: 18%; animation-delay: 0.6s; }
+    .stars span:nth-child(3) { left: 33%; top: 10%; animation-delay: 1.1s; }
+    .stars span:nth-child(4) { left: 47%; top: 16%; animation-delay: 0.8s; }
+    .stars span:nth-child(5) { left: 62%; top: 11%; animation-delay: 1.7s; }
+    .stars span:nth-child(6) { left: 74%; top: 14%; animation-delay: 0.3s; }
+    .stars span:nth-child(7) { left: 88%; top: 9%; animation-delay: 1.2s; }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.25; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.8); }
+    }
+
+    .footer-note {
+      position: absolute;
+      bottom: 18px;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255,255,255,0.74);
+      z-index: 20;
+      padding: 0 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="title">Versailles → Aachen</div>
+    <div class="subtitle">One cute ride, four passengers, one sleeping legend</div>
+
+    <div class="controls">
+      <button id="playBtn">Play Music</button>
+      <button id="boostBtn">Extra Vibes</button>
+    </div>
+
+    <div class="status" id="statusText">Cruising through the night ✨</div>
+
+    <div class="stars">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="hearts">
+      <span>💖</span>
+      <span>✨</span>
+      <span>💫</span>
+    </div>
+
+    <div class="map">
+      <svg viewBox="0 0 1200 800" preserveAspectRatio="none" aria-hidden="true">
+        <!-- soft map blobs -->
+        <defs>
+          <linearGradient id="routeGrad" x1="0%" x2="100%">
+            <stop offset="0%" stop-color="#ffd670"/>
+            <stop offset="100%" stop-color="#fff3b0"/>
+          </linearGradient>
+        </defs>
+
+        <path d="M130,560 C180,520 250,515 310,540 C380,570 440,548 505,500 C573,450 648,442 730,452 C818,463 900,438 1010,345"
+              fill="none"
+              stroke="url(#routeGrad)"
+              stroke-width="8"
+              stroke-linecap="round"
+              stroke-dasharray="12 12"
+              class="route-glow">
+        </path>
+
+        <circle cx="140" cy="560" r="10" fill="#ff8fab"></circle>
+        <circle cx="1010" cy="345" r="10" fill="#80ed99"></circle>
+
+        <text x="90" y="530" class="city-label">Versailles</text>
+        <text x="955" y="315" class="city-label">Aachen</text>
+
+        <text x="260" y="500" class="small-label">France</text>
+        <text x="845" y="395" class="small-label">Germany</text>
+
+        <!-- little route markers -->
+        <circle cx="320" cy="540" r="4" fill="rgba(255,255,255,0.8)"></circle>
+        <circle cx="500" cy="502" r="4" fill="rgba(255,255,255,0.8)"></circle>
+        <circle cx="690" cy="448" r="4" fill="rgba(255,255,255,0.8)"></circle>
+        <circle cx="860" cy="440" r="4" fill="rgba(255,255,255,0.8)"></circle>
+      </svg>
+    </div>
+
+    <div class="car-wrap" id="carWrap">
+      <svg class="car-bounce" viewBox="0 0 240 140" aria-hidden="true">
+        <!-- glow -->
+        <ellipse cx="120" cy="122" rx="86" ry="10" fill="rgba(0,0,0,0.22)"></ellipse>
+
+        <!-- car body -->
+        <rect x="38" y="58" width="158" height="42" rx="18" fill="#ff5d8f"></rect>
+        <path d="M72 60 L98 34 Q120 20 145 34 L176 60 Z" fill="#ff85a1"></path>
+
+        <!-- windows -->
+        <path d="M87 58 L105 39 Q120 30 136 39 L156 58 Z" fill="#d7f3ff"></path>
+        <line x1="121" y1="36" x2="121" y2="58" stroke="#9ac7d8" stroke-width="3"></line>
+
+        <!-- faces -->
+        <!-- front left smiling -->
+        <g class="vibe1">
+          <circle cx="100" cy="50" r="10" fill="#f3c7a0"></circle>
+          <circle cx="96" cy="48" r="1.5" fill="#1b1b1b"></circle>
+          <circle cx="103" cy="48" r="1.5" fill="#1b1b1b"></circle>
+          <path d="M95 53 Q100 57 105 53" stroke="#1b1b1b" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+        </g>
+
+        <!-- front right smiling -->
+        <g class="vibe2">
+          <circle cx="143" cy="50" r="10" fill="#f3c7a0"></circle>
+          <circle cx="139" cy="48" r="1.5" fill="#1b1b1b"></circle>
+          <circle cx="146" cy="48" r="1.5" fill="#1b1b1b"></circle>
+          <path d="M138 53 Q143 57 148 53" stroke="#1b1b1b" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+        </g>
+
+        <!-- back left smiling -->
+        <g class="vibe3">
+          <circle cx="78" cy="70" r="9" fill="#f3c7a0"></circle>
+          <circle cx="75" cy="68" r="1.3" fill="#1b1b1b"></circle>
+          <circle cx="81" cy="68" r="1.3" fill="#1b1b1b"></circle>
+          <path d="M74 73 Q78 76 82 73" stroke="#1b1b1b" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+        </g>
+
+        <!-- back right asleep -->
+        <g class="sleep">
+          <circle cx="164" cy="70" r="9" fill="#f3c7a0"></circle>
+          <path d="M160 68 Q162 66 164 68" stroke="#1b1b1b" stroke-width="1.3" fill="none" stroke-linecap="round"></path>
+          <path d="M165 68 Q167 66 169 68" stroke="#1b1b1b" stroke-width="1.3" fill="none" stroke-linecap="round"></path>
+          <path d="M161 74 Q164 76 167 74" stroke="#1b1b1b" stroke-width="1.4" fill="none" stroke-linecap="round"></path>
+        </g>
+
+        <!-- zzz -->
+        <g class="zzz">
+          <text x="178" y="56" font-size="14" fill="#ffffff">z</text>
+          <text x="188" y="46" font-size="12" fill="#ffffff">z</text>
+          <text x="196" y="38" font-size="10" fill="#ffffff">z</text>
+        </g>
+
+        <!-- wheels -->
+        <g class="wheel">
+          <circle cx="78" cy="104" r="18" fill="#1c2333"></circle>
+          <circle cx="78" cy="104" r="9" fill="#bfc8d6"></circle>
+        </g>
+        <g class="wheel">
+          <circle cx="170" cy="104" r="18" fill="#1c2333"></circle>
+          <circle cx="170" cy="104" r="9" fill="#bfc8d6"></circle>
+        </g>
+
+        <!-- headlights -->
+        <circle cx="194" cy="76" r="4" fill="#fff6b7"></circle>
+        <rect x="194" y="72" width="28" height="8" rx="4" fill="rgba(255, 246, 183, 0.26)"></rect>
+      </svg>
+    </div>
+
+    <audio id="roadSong" preload="auto">
+      <source src="rocket-man.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="footer-note">
+      Add your own audio file named <strong>rocket-man.mp3</strong> in the repo folder if you want the music button to work.
+    </div>
+  </div>
+
+  <script>
+    const playBtn = document.getElementById("playBtn");
+    const boostBtn = document.getElementById("boostBtn");
+    const audio = document.getElementById("roadSong");
+    const carWrap = document.getElementById("carWrap");
+    const statusText = document.getElementById("statusText");
+
+    let isPlaying = false;
+    let boostTimeout = null;
+
+    const messages = [
+      "Cruising through the night ✨",
+      "Three vibing, one dreaming 😴",
+      "Versailles slowly turning into Aachen 💫",
+      "Main-character road trip energy 🚗",
+      "Somebody is definitely asleep in the back seat 😭"
+    ];
+
+    let msgIndex = 0;
+    setInterval(() => {
+      msgIndex = (msgIndex + 1) % messages.length;
+      statusText.textContent = messages[msgIndex];
+    }, 3200);
+
+    playBtn.addEventListener("click", async () => {
+      if (!isPlaying) {
+        try {
+          await audio.play();
+          isPlaying = true;
+          playBtn.textContent = "Pause Music";
+          statusText.textContent = "Rocket mode activated 🚀";
+        } catch (err) {
+          statusText.textContent = "Add rocket-man.mp3 to the repo folder to play the music.";
+        }
+      } else {
+        audio.pause();
+        isPlaying = false;
+        playBtn.textContent = "Play Music";
+        statusText.textContent = "Cruising softly again ✨";
+      }
+    });
+
+    audio.addEventListener("ended", () => {
+      isPlaying = false;
+      playBtn.textContent = "Play Music";
+      statusText.textContent = "The ride keeps going even after the song ends 🌙";
+    });
+
+    boostBtn.addEventListener("click", () => {
+      clearTimeout(boostTimeout);
+      carWrap.style.filter = "drop-shadow(0 0 20px rgba(255,255,255,0.4))";
+      carWrap.style.animationDuration = "9s";
+      statusText.textContent = "Extra vibes unlocked 💖";
+
+      boostTimeout = setTimeout(() => {
+        carWrap.style.filter = "none";
+        carWrap.style.animationDuration = "14s";
+        statusText.textContent = "Back to smooth cruising ✨";
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
