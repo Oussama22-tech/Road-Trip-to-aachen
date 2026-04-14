@@ -248,13 +248,12 @@
 
     <div class="music-tip">
       <b>Music</b>
-      For copyright reasons, this page does not include Elton John audio directly.
-      You can add your own MP3 file later and it will play from the button below.
+      Due to copyright reasons, the song isn’t embedded here.
       <br />
-      <button id="musicBtn" class="start-btn">Play roadtrip music</button>
-      <audio id="bgMusic" loop>
-        <source src="rocket-man-snippet.mp3" type="audio/mpeg" />
-      </audio>
+      Tap the button below to open the soundtrack and play it while watching the trip 💫
+      <br />
+      <button id="spotifyBtn" class="start-btn">Open Rocket Man on Spotify</button>
+      <audio id="bgMusic" loop></audio>
     </div>
 
     <div class="love-note">
@@ -385,31 +384,11 @@
 
     animateCar();
 
-    const musicBtn = document.getElementById('musicBtn');
-    const bgMusic = document.getElementById('bgMusic');
-    let playing = false;
+    const spotifyBtn = document.getElementById('spotifyBtn');
 
-    musicBtn.addEventListener('click', async () => {
-      if (!bgMusic.querySelector('source').getAttribute('src')) {
-        alert('Add your own MP3 file first. Name it "rocket-man-snippet.mp3" and put it in the same GitHub repo folder as this HTML file.');
-        return;
-      }
-
-      try {
-        if (!playing) {
-          await bgMusic.play();
-          musicBtn.textContent = 'Pause music';
-          playing = true;
-        } else {
-          bgMusic.pause();
-          musicBtn.textContent = 'Play roadtrip music';
-          playing = false;
-        }
-      } catch (err) {
-        alert('Music could not start. Make sure the MP3 file exists in the repo and your browser allows audio playback after clicking.');
-      }
+    spotifyBtn.addEventListener('click', () => {
+      window.open('https://open.spotify.com/track/3gdewACMIVMEWVbyb8O9sY', '_blank');
     });
   </script>
 </body>
 </html>
-
